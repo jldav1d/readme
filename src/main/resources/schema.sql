@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS order_items (
     order_id INT,
     book_id INT,
     quantity INT NOT NULL,
+    purchased_price DECIMAL(10, 2) NOT NULL,
     PRIMARY KEY (order_id, book_id),
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
     FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE RESTRICT
