@@ -1,11 +1,11 @@
 services:
   mysql:
+    container_name: 'readme-mysql'
     image: 'mysql:latest'
     environment:
       - 'MYSQL_DATABASE=readme'
-      - 'MYSQL_ROOT_PASSWORD=secret'  # Required: Sets the root user password
-      - 'MYSQL_USER=myuser'           # Optional: Creates a non-root user
-      - 'MYSQL_PASSWORD=secret'       # Optional: Sets password for the non-root user
+      - 'MYSQL_PASSWORD=secret'
+      - 'MYSQL_ROOT_PASSWORD=secret'
+      - 'MYSQL_USER=user'
     ports:
-        # Switch to port 3306 if open
       - '3307:3306'

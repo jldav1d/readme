@@ -32,7 +32,6 @@ CREATE TABLE IF NOT EXISTS cart (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- 5. Orders Table
 CREATE TABLE IF NOT EXISTS orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
@@ -41,13 +40,15 @@ CREATE TABLE IF NOT EXISTS orders (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
+
+CREATE TABLE IF NOT EXISTS cart_items(
     cart_id INT,
     book_id INT,
     quantity INT NOT NULL DEFAULT 1,
     PRIMARY KEY (cart_id, book_id),
     FOREIGN KEY (cart_id) REFERENCES cart(id) ON DELETE CASCADE,
     FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
-    ) ENGINE=InnoDB;
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS order_items (
     order_id INT,
