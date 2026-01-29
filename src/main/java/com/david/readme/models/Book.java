@@ -1,25 +1,20 @@
 package com.david.readme.models;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Column;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
 @Table(name = "books")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter @Setter
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,11 +42,20 @@ public class Book {
     @Column(name = "published_at", nullable = false)
     private LocalDateTime publishAt;
 
+
+    @CreationTimestamp
     @Column(
         name = "created_at",
         insertable = false,
-        updatable = false,
-        columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
+        updatable = false
     )
     private LocalDateTime createdAt;
+
+    @ManyToMany
+    @JoinTable(
+            name = "book_categories",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private Set<Category> categories = new HashSet<>();
 }
