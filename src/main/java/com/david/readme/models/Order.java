@@ -8,7 +8,10 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "orders")
@@ -26,10 +29,18 @@ public class Order {
     private BigDecimal totalPrice;
 
     @CreationTimestamp
-    @Column(name = "date_ordered")
+    @Column(name = "date_ordered", nullable = false, updatable = false)
     private LocalDateTime dateOrdered;
 
-    @OneToMany(mappedBy = "orders", cascade = CascadeType.REMOVE)
-    private List<OrderItems> orderItems;
+
+    // points to the member "order" in the OrderItems table
+    @OneToMany(mappedBy = "order")
+    private Set<OrderItems> orderItems = new HashSet<>();
+
+    public Set<Book> getOrderItems() {
+        return orderItems.stream()
+                .map(OrderItems::getBook)
+                .collect(Collectors.toSet());
+    }
 
 }

@@ -2,13 +2,13 @@ package com.david.readme.models;
 
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -30,14 +30,18 @@ public class User {
     private String role;
 
     @CreationTimestamp
-    @Column(
-            name = "created_at",
-            insertable = false,
-            updatable = false
-    )
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    // points to the member name "user" in the Cart table
+    @OneToOne(mappedBy = "user")
+    private Cart cart;
+
+    // orphanRemoval removes orders made by the user
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,  orphanRemoval = true)
+    private List<Order> order;
 }

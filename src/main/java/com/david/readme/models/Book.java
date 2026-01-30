@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Entity
@@ -21,13 +22,13 @@ public class Book {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "title", nullable = false)
+    private String title;
 
     @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "author", nullable = true)
+    @Column(name = "author", nullable = false)
     private String author;
 
     @Column(name = "slug", unique = true, nullable = false)
@@ -40,15 +41,10 @@ public class Book {
     private int stock;
 
     @Column(name = "published_at", nullable = false)
-    private LocalDateTime publishAt;
-
+    private LocalDateTime publishedAt;
 
     @CreationTimestamp
-    @Column(
-        name = "created_at",
-        insertable = false,
-        updatable = false
-    )
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @ManyToMany
@@ -58,4 +54,24 @@ public class Book {
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private Set<Category> categories = new HashSet<>();
+
+    @OneToMany(mappedBy = "book",  cascade = CascadeType.ALL,  orphanRemoval = true)
+    private Set<OrderItems> orderItems = new HashSet<>();
+
+    public Set<Order> getOrders(){
+        return this.orderItems.stream()
+                .map(OrderItems::getOrder)
+                .collect(Collectors.toSet());
+
+    }
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<CartItems> cartItems = new HashSet<>();
+
+    public Set<Cart> getCarts(){
+        return this.cartItems.stream()
+                .map(CartItems::getCart)
+                .collect(Collectors.toSet());
+    }
+
 }

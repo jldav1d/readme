@@ -6,7 +6,10 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "cart")
@@ -21,14 +24,20 @@ public class Cart {
     private User user;
 
     @CreationTimestamp
-    @Column(name = "created_at",  insertable = false, updatable = false)
+    @Column(name = "created_at",  nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.REMOVE)
-    private List<CartItems> carterItems;
+//    @OneToMany(mappedBy = "cart")
+//    private Set<CartItems> cartItems = new HashSet<>();
+//
+//    private Set<Book> getBooks(){
+//        return this.cartItems.stream()
+//                .map(CartItems::getBook)
+//                .collect(Collectors.toSet());
+//    }
 
 }
