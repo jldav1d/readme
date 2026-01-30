@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class BookService {
@@ -28,8 +30,20 @@ public class BookService {
         return this.bookRepository.findBySlug(bookSlug);
     }
 
-    public List<GetBooksByCategory> getBooksByCategory(String categoryName) {
-        return this.bookRepository.findBooksByCategory(categoryName);
+    public List<GetBooksByCategory> getBooksByCategoryName(String categoryName) {
+        Set<Book> books = this.bookRepository.findBookByCategoriesName(categoryName);
+
+        return books.stream()
+                .map(b -> new GetBooksByCategory(
+                        b.getTitle(),
+                        b.getAuthor(),
+                        b.getDescription(),
+                        b.getPrice(),
+                        b.getStock(),
+                        b.getSlug(),
+                        b.getPublishedAt()
+                ))
+                .collect(Collectors.toList());
     }
 
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/books")
@@ -51,12 +52,10 @@ public class BookController {
 
     @GetMapping("/categories/{categoryName}")
     public ResponseEntity<List<GetBooksByCategory>> getAllCategories(@PathVariable String categoryName) {
-        List<GetBooksByCategory> books = this.bookService.getBooksByCategory(categoryName);
-
+        List<GetBooksByCategory> books = this.bookService.getBooksByCategoryName(categoryName);
         if(books.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-
         return ResponseEntity.ok(books);
     }
 }
