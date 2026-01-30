@@ -1,5 +1,10 @@
-DROP TABLE IF EXISTS users, books, categories, cart, cart_items, order_items, book_categories;
 
+/* enable for temporary testing */
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS cart_items, order_items, book_categories, users, books, categories, cart;
+SET FOREIGN_KEY_CHECKS = 1;
+
+/*TODO: add database migration */
 
 CREATE TABLE IF NOT EXISTS users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
