@@ -4,7 +4,7 @@ package com.david.readme.dtos;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public record AllBooksRequest(
+public record GetAllBooksRequest(
         Long id,
         String title,
         String author,
