@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS cart_items(
     cart_id INT,
     book_id INT,
     quantity INT NOT NULL DEFAULT 1,
+    date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (cart_id, book_id),
     FOREIGN KEY (cart_id) REFERENCES cart(id) ON DELETE CASCADE,
     FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE

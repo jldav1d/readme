@@ -1,3 +1,12 @@
+TRUNCATE TABLE users;
+TRUNCATE TABLE books;
+TRUNCATE TABLE categories;
+TRUNCATE TABLE book_categories;
+TRUNCATE TABLE cart;
+TRUNCATE TABLE cart_items;
+TRUNCATE TABLE orders;
+TRUNCATE TABLE order_items;
+
 INSERT INTO users (username, password, role) VALUES
  ('alice_reads', 'hash_pass_1', 'user'),
  ('bob_builder', 'hash_pass_2', 'user'),
