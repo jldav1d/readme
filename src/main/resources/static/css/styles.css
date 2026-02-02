@@ -9,6 +9,7 @@
     --bg-primary: #1e293b;
     --bg-secondary: #334155;
     --bg-tertiary: #475569;
+    --bg-error: #f44336;
 
     --text-primary: #f1f5f9;
     --text-secondary: #cbd5e1;
@@ -484,6 +485,13 @@ a:hover {
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
     color: var(--text-muted);
+}
+
+.error {
+    font-size: var(--text-xs);
+    padding: 0 var(--spacing-sm);
+    color: var(--bg-error);
+    font-style: italic;
 }
 
 /* breakpoints for responsiveness*/
