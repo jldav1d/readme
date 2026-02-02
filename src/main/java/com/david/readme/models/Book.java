@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-
 @Entity
 @Table(name = "books")
 @Getter @Setter
@@ -63,9 +62,6 @@ public class Book {
     @OneToMany(mappedBy = "book")
     private Set<OrderItems> orderItems = new HashSet<>();
 
-
     @OneToMany(mappedBy = "book")
     private Set<CartItems> cartItems = new HashSet<>();
-
-
 }

@@ -22,7 +22,7 @@ public class BookService {
 
     public List<BookRequest> getAllBooks() {
         return bookRepository.findAll().stream()
-                .map(this::convertToDTO)
+                .map(this::convertToBookRequest)
                 .collect(Collectors.toList());
     }
 
@@ -34,8 +34,7 @@ public class BookService {
         return this.bookRepository.findBySlug(bookSlug);
     }
 
-
-    private BookRequest convertToDTO(Book book) {
+    private BookRequest convertToBookRequest(Book book) {
         return new BookRequest(
                 book.getId(),
                 book.getTitle(),
