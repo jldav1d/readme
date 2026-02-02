@@ -3,13 +3,16 @@ package com.david.readme.dtos;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Set;
 
-public record GetAllBooksRequest(
+public record BookRequest(
         Long id,
         String title,
         String author,
-        String slug ,
+        String description,
+        String slug,
         BigDecimal price,
-        int stock,
-        LocalDateTime publishedAt
+        Integer stock,
+        LocalDateTime publishedAt,
+        Set<String> categories
 ) {}

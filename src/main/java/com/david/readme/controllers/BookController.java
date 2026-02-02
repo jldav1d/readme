@@ -2,23 +2,18 @@ package com.david.readme.controllers;
 
 import com.david.readme.dtos.GetBooksByCategory;
 import com.david.readme.models.Book;
-import com.david.readme.dtos.GetAllBooksRequest;
-import com.david.readme.models.Category;
+import com.david.readme.dtos.BookRequest;
 import com.david.readme.services.BookService;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/books")
+@CrossOrigin
 public class BookController {
     public BookService bookService;
 
@@ -27,19 +22,11 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<List<GetAllBooksRequest>> getAllBooks() {
+    public ResponseEntity<List<BookRequest>> getAllBooks() {
+        List<BookRequest> books = this.bookService.getAllBooks();
         return ResponseEntity.status(HttpStatus.OK)
                 .header(HttpHeaders.LOCATION, "/api/v1/books")
-                .body(this.bookService.getAllBooks().stream().map(b -> new GetAllBooksRequest(
-                        b.getId(),
-                        b.getTitle(),
-                        b.getAuthor(),
-                        b.getSlug(),
-                        b.getPrice(),
-                        b.getStock(),
-                        b.getPublishedAt()
-                    )
-                ).toList());
+                .body(books);
     }
 
     @GetMapping("/{bookSlug}")

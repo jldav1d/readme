@@ -1,7 +1,9 @@
 package com.david.readme.services;
 
+import com.david.readme.dtos.BookRequest;
 import com.david.readme.dtos.GetBooksByCategory;
 import com.david.readme.models.Book;
+import com.david.readme.models.Category;
 import com.david.readme.repositories.BookRepository;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +20,10 @@ public class BookService {
         this.bookRepository = bookRepository;
     }
 
-    public List<Book> getAllBooks() {
-        return bookRepository.findAll();
+    public List<BookRequest> getAllBooks() {
+        return bookRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     public Optional<Book> getBookByTitle(String bookTitle) {
@@ -28,6 +32,23 @@ public class BookService {
 
     public Optional<Book> getBookBySlug(String bookSlug) {
         return this.bookRepository.findBySlug(bookSlug);
+    }
+
+
+    private BookRequest convertToDTO(Book book) {
+        return new BookRequest(
+                book.getId(),
+                book.getTitle(),
+                book.getAuthor(),
+                book.getDescription(),
+                book.getSlug(),
+                book.getPrice(),
+                book.getStock(),
+                book.getPublishedAt(),
+                book.getCategories().stream()
+                        .map(Category::getName)
+                        .collect(Collectors.toSet())
+        );
     }
 
     public List<GetBooksByCategory> getBooksByCategoryName(String categoryName) {

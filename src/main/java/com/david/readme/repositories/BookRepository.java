@@ -13,13 +13,5 @@ import java.util.Set;
 public interface BookRepository extends JpaRepository<Book, Long> {
     Optional<Book> findByTitle(String title);
     Optional<Book> findBySlug(String slug);
-
-
-//    @Query("SELECT new com.david.readme.dtos.GetBooksByCategory(b.title, b.author, b.description, b.price, b.stock, b.slug, b.publishedAt)" +
-//            "FROM Book b JOIN b.categories c " +
-//            "WHERE LOWER(c.name) = :categoryName"
-//    )
-//    List<GetBooksByCategory> findBooksByCategory(@Param("categoryName") String categoryName);
-
     Set<Book> findBookByCategoriesName(String categoryName);
 }
