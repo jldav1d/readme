@@ -35,6 +35,9 @@ async function sendLoginCredentials() {
 
 
         console.log("Login successful!");
+
+        // redirect user to index.html
+        window.location.href = 'index.html';
     }
     catch (error) {
         errorText.textContent = error.message;
