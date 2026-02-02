@@ -3,6 +3,8 @@ package com.david.readme.services;
 import com.david.readme.dtos.OrderDetailRequest;
 import com.david.readme.dtos.OrderItemRequest;
 import com.david.readme.dtos.OrderRequest;
+import com.david.readme.exceptions.ResourceNotFoundException;
+import com.david.readme.exceptions.UnauthorizedException;
 import com.david.readme.models.Order;
 import com.david.readme.models.OrderItems;
 import com.david.readme.repositories.OrderRepository;
@@ -16,24 +18,24 @@ import java.util.List;
 public class OrderService {
     private OrderRepository orderRepository;
 
-    public OrderService(OrderRepository orderRepository, SslBundles sslBundles) {
+    public OrderService(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 
     public List<OrderRequest> getOrdersByUserId(Long userId) {
-        return orderRepository.findByUserIdOrderByDateOrderedDesc(userId)
+        return this.orderRepository.findByUserIdOrderByDateOrderedDesc(userId)
                 .stream()
                 .map(this::convertToOrderRequest)
                 .toList();
     }
 
     public OrderDetailRequest getOrderById(Long orderId, Long userId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));
+        Order order = this.orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId));
 
         // verify the order belongs to the user
         if (!order.getUser().getId().equals(userId)) {
-            throw new RuntimeException("Unauthorized access to order");
+            throw new UnauthorizedException("Unauthorized access to order");
         }
 
         return convertToOrderDetailRequest(order);
