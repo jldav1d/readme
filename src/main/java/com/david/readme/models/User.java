@@ -2,7 +2,9 @@ package com.david.readme.models;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -13,24 +15,25 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 @Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @Column(name = "username", nullable = false)
+    @Column(nullable = false)
     private String username;
 
-    @Column(name = "password", nullable = false)
+    @Column(nullable = false)
     private String password;
 
-    @Column(name = "role", length = 50)
+    @Column(length = 50)
     private String role;
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
@@ -38,10 +41,10 @@ public class User {
     private LocalDateTime updatedAt;
 
     // points to the member name "user" in the Cart table
-    @OneToOne(mappedBy = "user")
+    // orphanRemoval removes orders made by the user
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Cart cart;
 
-    // orphanRemoval removes orders made by the user
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,  orphanRemoval = true)
+    @OneToMany(mappedBy = "user")
     private List<Order> order;
 }

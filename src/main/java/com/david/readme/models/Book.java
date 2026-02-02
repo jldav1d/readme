@@ -2,7 +2,9 @@ package com.david.readme.models;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -10,43 +12,46 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @Entity
 @Table(name = "books")
 @Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @Column(name = "title", nullable = false)
+    @Column(nullable = false)
     private String title;
 
-    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "author", nullable = false)
+    @Column(nullable = false)
     private String author;
 
-    @Column(name = "slug", unique = true, nullable = false)
+    @Column(unique = true, nullable = false)
     private String slug;
 
-    @Column(name = "price", nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
-    @Column(name = "stock", nullable = false)
-    private int stock;
+    @Column(nullable = false)
+    private Integer stock;
 
     @Column(name = "published_at", nullable = false)
     private LocalDateTime publishedAt;
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+
+    // since book_categories is a purely a junction table with no additional fields
+    // we can use JPA's ability to reference the junction table without needing to create the actual model
     @ManyToMany
     @JoinTable(
             name = "book_categories",
@@ -55,23 +60,12 @@ public class Book {
     )
     private Set<Category> categories = new HashSet<>();
 
-    @OneToMany(mappedBy = "book",  cascade = CascadeType.ALL,  orphanRemoval = true)
+    @OneToMany(mappedBy = "book")
     private Set<OrderItems> orderItems = new HashSet<>();
 
-    public Set<Order> getOrders(){
-        return this.orderItems.stream()
-                .map(OrderItems::getOrder)
-                .collect(Collectors.toSet());
 
-    }
-
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "book")
     private Set<CartItems> cartItems = new HashSet<>();
 
-    public Set<Cart> getCarts(){
-        return this.cartItems.stream()
-                .map(CartItems::getCart)
-                .collect(Collectors.toSet());
-    }
 
 }
