@@ -1,6 +1,28 @@
+let allBooks = [];
+let filteredBooks = [];
+let currentSearchQuery = '';
+let currentCategory = 'all'
+
 document.addEventListener('DOMContentLoaded', async () => {
     await loadBooks();
+    setupEventListeners();
 });
+
+function setupEventListeners() {
+    // search input with debounce
+    const searchInput = document.getElementById('search-input');
+    let searchTimeout;
+
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            currentSearchQuery = e.target.value.toLowerCase().trim();
+            applyFilters();
+
+            // wait 300ms after user stops typing
+        }, 300);
+    });
+}
 
 async function loadBooks() {
     const booksGrid = document.getElementById('books-grid');
@@ -14,22 +36,114 @@ async function loadBooks() {
             throw new Error('Failed to fetch books');
         }
 
-        const books = await response.json();
+        allBooks = await response.json();
+        filteredBooks = [...allBooks];
 
         loading.style.display = 'none';
 
-        if (books.length === 0) {
+        if (allBooks.length === 0) {
             emptyState.style.display = 'block';
+            updateResultsCount(0);
             return;
         }
 
-        booksGrid.innerHTML = books.map(book => createBookCard(book)).join('');
+        // display categories
+        loadCategories();
+
+        // display all books initially
+        displayBooks(filteredBooks);
+        updateResultsCount(filteredBooks.length);
 
     } catch (error) {
         console.error('Error loading books:', error);
         loading.innerHTML = '<p class="text-muted">Error loading books. Please try again later.</p>';
     }
 }
+
+function loadCategories() {
+    const categoryFiltersContainer = document.getElementById('category-filters');
+
+    // extract unique categories from all books
+    const categoriesSet = new Set();
+    allBooks.forEach(book => {
+        if (book.categories && book.categories.length > 0) {
+            book.categories.forEach(category => categoriesSet.add(category));
+        }
+    });
+
+    const categories = Array.from(categoriesSet).sort();
+
+    // retain the "All Books" button and add category buttons
+    const categoryButtons = categories.map(category =>
+        `<button class="filter-btn" data-category="${escapeHtml(category)}">
+            ${escapeHtml(category)}
+        </button>`
+    ).join('');
+
+    categoryFiltersContainer.innerHTML += categoryButtons;
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+
+            e.target.classList.add('active');
+
+            // update current category and apply filters
+            currentCategory = e.target.dataset.category;
+            applyFilters();
+        });
+    });
+}
+
+function applyFilters() {
+    filteredBooks = [...allBooks];
+
+    // apply category filter
+    if (currentCategory !== 'all') {
+        filteredBooks = filteredBooks.filter(book =>
+            book.categories && book.categories.includes(currentCategory)
+        );
+    }
+
+    // apply search filter
+    if (currentSearchQuery) {
+        filteredBooks = filteredBooks.filter(book =>
+            book.title.toLowerCase().includes(currentSearchQuery)
+        );
+    }
+
+    // Display filtered results
+    displayBooks(filteredBooks);
+    updateResultsCount(filteredBooks.length);
+}
+
+function displayBooks(books) {
+    const booksGrid = document.getElementById('books-grid');
+    const emptyState = document.getElementById('empty-state');
+
+    if (books.length === 0) {
+        booksGrid.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+    }
+
+    emptyState.style.display = 'none';
+    booksGrid.innerHTML = books.map(book => createBookCard(book)).join('');
+}
+
+function updateResultsCount(count) {
+    const resultsCountElement = document.getElementById('results-count');
+
+    if (count === 0) {
+        resultsCountElement.textContent = 'No books found';
+    } else if (count === allBooks.length) {
+        resultsCountElement.textContent = `Showing all ${count} book${count !== 1 ? 's' : ''}`;
+    } else {
+        resultsCountElement.textContent = `Showing ${count} of ${allBooks.length} book${allBooks.length !== 1 ? 's' : ''}`;
+    }
+}
+
 
 function createBookCard(book) {
     const stockClass = book.stock > 10 ? 'in-stock' : book.stock > 0 ? 'low-stock' : 'out-of-stock';
@@ -43,9 +157,10 @@ function createBookCard(book) {
 
     return `
         <div class="book-card">
-            <div class="book-placeholder">
-                <span>📖</span>
-            </div>
+<!--        TODO: add book image -->
+<!--            <div class="book-placeholder">-->
+<!--                <span>📖</span>-->
+<!--            </div>-->
             <div class="book-content">
                 ${categories}
                 <h3 class="book-title">${escapeHtml(book.title)}</h3>

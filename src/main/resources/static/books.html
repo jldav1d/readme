@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="css/styles.css">
     <script defer src="js/config.js"></script>
     <script defer src="js/books.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/cart.js"></script>
 </head>
 <body>
     <header class="header">
@@ -15,11 +17,10 @@
                 <a href="index.html"><span>{</span> readme <span>}</span></a>
             </div>
             <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
                 <li><a href="books.html">Books</a></li>
-                <li><a href="login.html" id="auth-link">Login</a></li>
-                <!--            <li><a href="cart.html">Cart</a></li>-->
+                <li><a href="cart.html">Cart</a></li>
                 <!--            <li><a href="orders.html">Orders</a></li>-->
+                <li><a href="login.html" id="auth-link">Login</a></li>
             </ul>
         </nav>
     </header>
@@ -29,6 +30,34 @@
             <div class="page-header">
                 <h1>Available Books</h1>
                 <p class="text-muted">// Browse our collection</p>
+            </div>
+
+            <div class="search-filter-section">
+                <!-- Search Bar -->
+                <div class="search-bar">
+                    <input
+                            type="text"
+                            id="search-input"
+                            class="form-input"
+                            placeholder="Search books by title..."
+                    />
+                </div>
+
+                <!-- Category Filter -->
+                <div class="filter-section">
+                    <label class="form-label">Filter by Category:</label>
+                    <div id="category-filters" class="category-filters">
+                        <button class="filter-btn active" data-category="all">
+                            All Books
+                        </button>
+                        <!-- Category buttons will be loaded here dynamically -->
+                    </div>
+                </div>
+
+                <!-- Results Info -->
+                <div class="results-info">
+                    <p class="text-muted" id="results-count">Loading books...</p>
+                </div>
             </div>
 
             <div id="loading" class="loading">
