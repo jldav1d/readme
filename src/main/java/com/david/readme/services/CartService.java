@@ -2,6 +2,7 @@ package com.david.readme.services;
 
 import com.david.readme.dtos.CartItemRequest;
 import com.david.readme.dtos.CartRequest;
+import com.david.readme.exceptions.ResourceNotFoundException;
 import com.david.readme.models.Cart;
 import com.david.readme.models.CartItems;
 import com.david.readme.repositories.CartRepository;
@@ -19,15 +20,9 @@ public class CartService {
         this.cartRepository = cartRepository;
     }
 
-
-    public Optional<CartRequest> getCartByUserId(Long userId) {
-        Cart cart = this.cartRepository.findByUserId(userId).orElse(null);
-        if (cart == null) {
-            return Optional.empty();
-        }
-
-        return Optional.of(convertToCartRequest(cart));
-
+    public CartRequest getCartByUserId(Long userId) {
+        Cart cart = this.cartRepository.findByUserId(userId).orElseThrow(() -> new ResourceNotFoundException("Cart not found with userId " + userId));
+        return convertToCartRequest(cart);
     }
 
     private CartRequest convertToCartRequest(Cart cart) {

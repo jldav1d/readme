@@ -22,15 +22,12 @@ public class CartController {
     }
 
     @GetMapping
-    public ResponseEntity<Optional<CartRequest>> getCart(Authentication authentication) {
+    public ResponseEntity<CartRequest> getCart(Authentication authentication) {
         // assuming the user ID is stored in the authentication principal
         // i'll be using a placeholder userId for now
         Long userId = getUserIdFromAuthentication(authentication);
-        Optional<CartRequest> cart = cartService.getCartByUserId(userId);
+        CartRequest cart = cartService.getCartByUserId(userId);
 
-        if (cart.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(cart);
     }
 
