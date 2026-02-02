@@ -3,8 +3,8 @@ package com.david.readme.controllers;
 import com.david.readme.dtos.OrderDetailRequest;
 import com.david.readme.dtos.OrderRequest;
 import com.david.readme.services.OrderService;
+import com.david.readme.utils.AuthUtil;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,30 +14,25 @@ import java.util.List;
 @CrossOrigin
 public class OrderController {
     private final OrderService orderService;
+    private final AuthUtil authUtil;
 
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, AuthUtil authUtil) {
         this.orderService = orderService;
+        this.authUtil = authUtil;
     }
 
     @GetMapping
-    public ResponseEntity<List<OrderRequest>> getOrders(Authentication authentication) {
-        Long userId = getUserIdFromAuthentication(authentication);
+    public ResponseEntity<List<OrderRequest>> getOrders() {
+        Long userId = authUtil.getCurrentUser().getId();
         List<OrderRequest> orders = orderService.getOrdersByUserId(userId);
         return ResponseEntity.ok(orders);
     }
 
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderDetailRequest> getOrderById(
-            @PathVariable Long orderId,
-            Authentication authentication) {
-        Long userId = getUserIdFromAuthentication(authentication);
+            @PathVariable Long orderId) {
+        Long userId = authUtil.getCurrentUser().getId();
         OrderDetailRequest order = orderService.getOrderById(orderId, userId);
         return ResponseEntity.ok(order);
-    }
-
-    private Long getUserIdFromAuthentication(Authentication authentication) {
-        // TODO: Implement based on your authentication mechanism
-        // For now, this is a placeholder
-        return 1L; // Placeholder
     }
 }
