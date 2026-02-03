@@ -5,12 +5,13 @@ INSERT INTO users (username, password, role) VALUES
  ('bookworm_dana', 'hash_pass_4', 'user'),
  ('eddie_lit', 'hash_pass_5', 'user');
 
-INSERT INTO books (title, author, description, slug, price) VALUES
-('The Great Gatsby', 'F. Scott Fitzgerald', 'A classic tale of wealth and love.', 'the-great-gatsby', 15.99),
-('1984', 'George Orwell', 'Dystopian future society.', '1984-orwell', 12.50),
-('The Hobbit', 'J.R.R. Tolkien', 'A fantasy adventure.', 'the-hobbit', 18.00),
-('Atomic Habits', 'James Clear', 'Small changes, remarkable results.', 'atomic-habits', 22.00),
-('Project Hail Mary', 'Andy Weir', 'Space survival sci-fi.', 'project-hail-mary', 25.00);
+INSERT INTO books (title, author, description, slug, price, stock, published_at) VALUES
+('The Great Gatsby', 'F. Scott Fitzgerald', 'A classic tale of wealth and love.', 'the-great-gatsby', 15.99, 45, '1992-04-10 09:00:00'),
+('1984', 'George Orwell', 'Dystopian future society.', '1984-orwell', 12.50, 30, '1987-06-08 09:00:00'),
+('The Hobbit', 'J.R.R. Tolkien', 'A fantasy adventure.', 'the-hobbit', 18.00, 25, '1972-09-21 09:00:00'),
+('Atomic Habits', 'James Clear', 'Small changes, remarkable results.', 'atomic-habits', 22.00, 100, '2018-10-16 09:00:00'),
+('Project Hail Mary', 'Andy Weir', 'Space survival sci-fi.', 'project-hail-mary', 25.00, 12, '2021-05-04 09:00:00');
+
 
 INSERT INTO categories (name) VALUES
 ('Fiction'),
