@@ -11,11 +11,16 @@ import com.david.readme.models.User;
 import com.david.readme.repositories.CartRepository;
 import com.david.readme.repositories.UserRepository;
 import com.david.readme.utils.AuthUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,6 +30,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final AuthUtil authUtil;
+    private final SecurityContextRepository securityContextRepository =
+            new HttpSessionSecurityContextRepository();
 
     public AuthService(UserRepository usr, CartRepository cartRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, AuthUtil authUtil) {
         this.userRepository = usr;
@@ -34,7 +41,7 @@ public class AuthService {
         this.authUtil = authUtil;
     }
 
-    public AuthResponse register(RegisterRequest registerRequest) {
+    public AuthResponse register(RegisterRequest registerRequest, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
 
         if(userRepository.existsByUsername(registerRequest.username())){
             throw new UsernameAlreadyExistsException("Username is already in use");
@@ -51,7 +58,6 @@ public class AuthService {
         cart.setUser(savedUser);
 
         cartRepository.save(cart);
-
         return new AuthResponse(
             savedUser.getId(),
             savedUser.getUsername(),
@@ -60,16 +66,18 @@ public class AuthService {
         );
     }
 
-    public AuthResponse login(LoginRequest request) {
+    public AuthResponse login(LoginRequest request, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            request.username(),
-                            request.password()
-                    )
+                    new UsernamePasswordAuthenticationToken(request.username(), request.password())
             );
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(authentication);
+
+            SecurityContextHolder.setContext(context);
+
+            securityContextRepository.saveContext(context, servletRequest, servletResponse);
 
             // get user details
             User user = userRepository.findByUsername(request.username())
