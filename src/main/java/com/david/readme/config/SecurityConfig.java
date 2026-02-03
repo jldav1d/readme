@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -60,14 +61,18 @@ public class SecurityConfig {
                     // authenticate any other request by default
                     .anyRequest().authenticated()
             )
-            .formLogin(AbstractHttpConfigurer::disable)
+            .formLogin(form -> form.loginPage("/login.html").permitAll())
             .httpBasic(AbstractHttpConfigurer::disable)
             .logout(logout -> logout
                     .logoutUrl("/api/v1/auth/logout")
                     .logoutSuccessHandler(logoutSuccessHandler())
                     .invalidateHttpSession(true)
                     .deleteCookies("JSESSIONID")
-            );
+            )
+            .sessionManagement(session -> session
+                    .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+            )
+            .authenticationProvider(authenticationProvider());
 
         return http.build();
     }
