@@ -1,9 +1,8 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    // check authentication
     const authenticated = await isAuthenticated();
 
     if (!authenticated) {
-        alert('Please login to view your orders');
+        showNotification('Please login to view your orders');
         redirectToLogin();
         return;
     }
