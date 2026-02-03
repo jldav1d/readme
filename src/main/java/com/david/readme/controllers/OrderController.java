@@ -4,6 +4,7 @@ import com.david.readme.dtos.OrderDetailRequest;
 import com.david.readme.dtos.OrderRequest;
 import com.david.readme.services.OrderService;
 import com.david.readme.utils.AuthUtil;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,5 +35,12 @@ public class OrderController {
         Long userId = authUtil.getCurrentUser().getId();
         OrderDetailRequest order = orderService.getOrderById(orderId, userId);
         return ResponseEntity.ok(order);
+    }
+
+    @PostMapping("/checkout")
+    public ResponseEntity<OrderDetailRequest> checkout() {
+        Long userId = authUtil.getCurrentUser().getId();
+        OrderDetailRequest order = orderService.checkout(userId);
+        return new ResponseEntity<>(order, HttpStatus.CREATED);
     }
 }
