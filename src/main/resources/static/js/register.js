@@ -34,8 +34,11 @@ async function registerUser(){
 
         console.log("Registered successfully!");
 
-        // redirect user to index.html
-        window.location.href = 'index.html';
+        // user flow:
+        // register -> login (to get session) -> books/orders/carts
+
+        // redirect user to login.html
+        window.location.href = 'login.html';
     }
     catch(error){
         errorText.classList.remove('hidden');
