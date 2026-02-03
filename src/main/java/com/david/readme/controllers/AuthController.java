@@ -4,6 +4,8 @@ import com.david.readme.dtos.AuthResponse;
 import com.david.readme.dtos.LoginRequest;
 import com.david.readme.dtos.RegisterRequest;
 import com.david.readme.services.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,14 +23,14 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
-        AuthResponse response = authService.register(request);
+    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+        AuthResponse response = authService.register(request, servletRequest, servletResponse);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        AuthResponse response = authService.login(request);
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+        AuthResponse response = authService.login(request, servletRequest, servletResponse);
         return ResponseEntity.ok(response);
     }
 
