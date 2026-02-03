@@ -175,7 +175,7 @@ function createBookCard(book) {
                         Details
                     </button>
                     <button class="btn btn-primary" 
-                            onclick="addToCart(${book.id})"
+                            onclick="addToCart(event, ${book.id})"
                             ${book.stock === 0 ? 'disabled' : ''}>
                         Add to Cart
                     </button>
@@ -191,10 +191,44 @@ function viewBookDetails(bookId) {
     alert('Book details feature coming soon!');
 }
 
-function addToCart(bookId) {
-    // TODO: implement add to cart (will require authentication)
-    console.log('Add to cart:', bookId);
-    alert('Please login to add items to cart');
+async function addToCart(event, bookId) {
+    const authenticated = await isAuthenticated();
+
+    if (!authenticated) {
+        if (confirm('Please login to add items to your cart. Redirect to login page?')) {
+            redirectToLogin();
+        }
+        return;
+    }
+
+    const button = event.target;
+    const originalText = button.textContent;
+
+    button.disabled = true;
+    button.textContent = 'Adding...';
+
+    try {
+        const cart = await addItemToCart(bookId, 1);
+
+        button.textContent = '✓ Added';
+        button.style.backgroundColor = '#10b981'; // Green color
+
+        showNotification('Book added to cart successfully!', 'success');
+
+        setTimeout(() => {
+            button.textContent = originalText;
+            button.disabled = false;
+            button.style.backgroundColor = '';
+        }, 2000);
+
+    } catch (error) {
+        console.error('Error adding to cart:', error);
+
+        showNotification(error.message || 'Failed to add to cart', 'error');
+
+        button.textContent = originalText;
+        button.disabled = false;
+    }
 }
 
 function escapeHtml(text) {
