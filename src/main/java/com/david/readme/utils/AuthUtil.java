@@ -21,6 +21,8 @@ public class AuthUtil {
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        System.out.println(authentication);
+
         if (authentication == null || !authentication.isAuthenticated() ||
                 Objects.equals(authentication.getPrincipal(), "anonymousUser")) {
             throw new UnauthorizedException("User not authenticated");
