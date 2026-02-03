@@ -2,9 +2,11 @@ package com.david.readme.services;
 
 import com.david.readme.dtos.BookRequest;
 import com.david.readme.dtos.GetBooksByCategory;
+import com.david.readme.exceptions.ResourceNotFoundException;
 import com.david.readme.models.Book;
 import com.david.readme.models.Category;
 import com.david.readme.repositories.BookRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class BookService {
-    public BookRepository bookRepository;
+    private BookRepository bookRepository;
 
     public BookService(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
@@ -24,6 +26,12 @@ public class BookService {
         return bookRepository.findAll().stream()
                 .map(this::convertToBookRequest)
                 .collect(Collectors.toList());
+    }
+
+    public BookRequest getBookById(Long id) {
+        Book book = this.bookRepository.findById(id).
+                orElseThrow(() -> new ResourceNotFoundException("Unable to find book with id: "+ id));
+        return convertToBookRequest(book);
     }
 
     public Optional<Book> getBookByTitle(String bookTitle) {
