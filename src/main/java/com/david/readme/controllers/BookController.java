@@ -1,6 +1,7 @@
 package com.david.readme.controllers;
 
 import com.david.readme.dtos.GetBooksByCategory;
+import com.david.readme.dtos.PaginatedResponse;
 import com.david.readme.models.Book;
 import com.david.readme.dtos.BookRequest;
 import com.david.readme.services.BookService;
@@ -22,8 +23,8 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BookRequest>> getAllBooks() {
-        List<BookRequest> books = this.bookService.getAllBooks();
+    public ResponseEntity<PaginatedResponse<BookRequest>> getAllBooks(@RequestParam Integer page, @RequestParam Integer pageSize) {
+        PaginatedResponse<BookRequest> books = this.bookService.getAllBooks(page, pageSize);
         return ResponseEntity.status(HttpStatus.OK)
                 .header(HttpHeaders.LOCATION, "/api/v1/books")
                 .body(books);
