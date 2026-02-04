@@ -521,10 +521,14 @@ a:hover {
     color: var(--text-primary);
 }
 
+.category-filters-container {
+    display: flex;
+    gap: var(--spacing-md);
+}
+
 .category-filters {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-sm);
+    gap: var(--spacing-xs);
 }
 
 .filter-btn {
@@ -1088,7 +1092,7 @@ a:hover {
         width: 100%;
     }
 
-    .category-filters {
+    .category-filters-container {
         gap: var(--spacing-xs);
     }
 
