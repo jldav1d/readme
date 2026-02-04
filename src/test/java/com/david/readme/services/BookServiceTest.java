@@ -34,6 +34,8 @@ class BookServiceTest {
     private Book testBook2;
     private Category testCategory1;
     private Category testCategory2;
+    private final int page = 1;
+    private final int pageSize = 10;
 
     @BeforeEach
     void setUp() {
@@ -83,7 +85,7 @@ class BookServiceTest {
         when(bookRepository.findAll()).thenReturn(books);
 
         // Act
-        List<BookRequest> result = bookService.getAllBooks();
+        List<BookRequest> result = bookService.getAllBooks(page, pageSize);
 
         // Assert
         assertNotNull(result);
@@ -101,7 +103,7 @@ class BookServiceTest {
         when(bookRepository.findAll()).thenReturn(Collections.emptyList());
 
         // Act
-        List<BookRequest> result = bookService.getAllBooks();
+        List<BookRequest> result = bookService.getAllBooks(page, pageSize);
 
         // Assert
         assertNotNull(result);
@@ -257,7 +259,7 @@ class BookServiceTest {
         when(bookRepository.findAll()).thenReturn(Arrays.asList(testBook1));
 
         // Act
-        bookService.getAllBooks();
+        bookService.getAllBooks(page, pageSize);
 
         // Assert
         verify(bookRepository, times(1)).findAll();
@@ -285,8 +287,8 @@ class BookServiceTest {
         when(bookRepository.findAll()).thenReturn(Arrays.asList(testBook1, testBook2));
 
         // Act
-        List<BookRequest> result1 = bookService.getAllBooks();
-        List<BookRequest> result2 = bookService.getAllBooks();
+        List<BookRequest> result1 = bookService.getAllBooks(page, pageSize);
+        List<BookRequest> result2 = bookService.getAllBooks(page, pageSize);
 
         // Assert
         assertEquals(result1.size(), result2.size());
