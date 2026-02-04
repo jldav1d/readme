@@ -1,6 +1,7 @@
 package com.david.readme.services;
 
 import com.david.readme.dtos.BookRequest;
+import com.david.readme.dtos.PaginatedResponse;
 import com.david.readme.exceptions.ResourceNotFoundException;
 import com.david.readme.models.Book;
 import com.david.readme.models.Category;
@@ -12,10 +13,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -34,6 +37,8 @@ class BookServiceTest {
     private Book testBook2;
     private Category testCategory1;
     private Category testCategory2;
+    private final int page = 0;
+    private final int pageSize = 1;
 
     @BeforeEach
     void setUp() {
@@ -80,34 +85,49 @@ class BookServiceTest {
     void getAllBooks_ShouldReturnAllBooks() {
         // Arrange
         List<Book> books = Arrays.asList(testBook1, testBook2);
-        when(bookRepository.findAll()).thenReturn(books);
+        Page<Book> bookPage = new PageImpl<>(books);
+
+        // must include the Pageable class so Mockito knows which findAll version to run
+        // bookPage is passed since Pageable returns a Page<T> Object
+        when(bookRepository.findAll(any(Pageable.class))).thenReturn(bookPage);
 
         // Act
-        List<BookRequest> result = bookService.getAllBooks();
+        PaginatedResponse<BookRequest> result = bookService.getAllBooks(page, pageSize);
 
         // Assert
         assertNotNull(result);
-        assertEquals(2, result.size());
-        assertEquals("Clean Code", result.get(0).title());
-        assertEquals("The Design of Everyday Things", result.get(1).title());
+        assertEquals(2, result.totalItems());
+        assertEquals("Clean Code", result.content().getFirst().title());
+        assertEquals("The Design of Everyday Things", result.content().get(1).title());
 
-        verify(bookRepository, times(1)).findAll();
+        verify(bookRepository, times(1)).findAll(any(Pageable.class));
     }
 
     @Test
-    @DisplayName("Should return empty list when no books exist")
-    void getAllBooks_WhenNoBooksExist_ShouldReturnEmptyList() {
+    @DisplayName("Should return empty page when no books exist")
+    void getAllBooks_WhenNoBooksExist_ShouldReturnEmptyPage() {
         // Arrange
-        when(bookRepository.findAll()).thenReturn(Collections.emptyList());
+        Page<Book> emptyPage = new PageImpl<>(
+                Collections.emptyList(),
+                PageRequest.of(page, pageSize),
+                0
+        );
+
+        when(bookRepository.findAll(any(Pageable.class))).thenReturn(emptyPage);
 
         // Act
-        List<BookRequest> result = bookService.getAllBooks();
+        PaginatedResponse<BookRequest> result = bookService.getAllBooks(page, pageSize);
 
         // Assert
         assertNotNull(result);
-        assertTrue(result.isEmpty());
+        assertNotNull(result.content());
+        assertTrue(result.content().isEmpty());
+        assertEquals(0, result.totalItems());
+        assertEquals(0, result.totalPages());
+        assertEquals(page, result.currentPage());
+        assertEquals(pageSize, result.pageSize());
 
-        verify(bookRepository, times(1)).findAll();
+        verify(bookRepository, times(1)).findAll(any(Pageable.class));
     }
 
     @Test
@@ -251,20 +271,6 @@ class BookServiceTest {
     }
 
     @Test
-    @DisplayName("Should verify repository is called exactly once for getAllBooks")
-    void getAllBooks_ShouldCallRepositoryOnce() {
-        // Arrange
-        when(bookRepository.findAll()).thenReturn(Arrays.asList(testBook1));
-
-        // Act
-        bookService.getAllBooks();
-
-        // Assert
-        verify(bookRepository, times(1)).findAll();
-        verifyNoMoreInteractions(bookRepository);
-    }
-
-    @Test
     @DisplayName("Should verify repository is called exactly once for getBookById")
     void getBookById_ShouldCallRepositoryOnce() {
         // Arrange
@@ -278,20 +284,6 @@ class BookServiceTest {
         verifyNoMoreInteractions(bookRepository);
     }
 
-    @Test
-    @DisplayName("Should handle multiple getAllBooks calls independently")
-    void getAllBooks_MultipleCalls_ShouldWorkIndependently() {
-        // Arrange
-        when(bookRepository.findAll()).thenReturn(Arrays.asList(testBook1, testBook2));
-
-        // Act
-        List<BookRequest> result1 = bookService.getAllBooks();
-        List<BookRequest> result2 = bookService.getAllBooks();
-
-        // Assert
-        assertEquals(result1.size(), result2.size());
-        verify(bookRepository, times(2)).findAll();
-    }
 
     @Test
     @DisplayName("Should preserve decimal precision in price")

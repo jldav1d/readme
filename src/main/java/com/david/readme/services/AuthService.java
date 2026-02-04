@@ -69,14 +69,18 @@ public class AuthService {
     public AuthResponse login(LoginRequest request, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.username(), request.password())
+                        new UsernamePasswordAuthenticationToken(request.username(), request.password())
             );
 
             SecurityContext context = SecurityContextHolder.createEmptyContext();
+
+            // takes in the newly created Authentication token of the user
             context.setAuthentication(authentication);
 
+            //associates a new SecurityContext with the current thread of execution.
             SecurityContextHolder.setContext(context);
 
+            // stores the session so it can be queried between requests
             securityContextRepository.saveContext(context, servletRequest, servletResponse);
 
             // get user details
