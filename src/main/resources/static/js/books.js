@@ -1,12 +1,22 @@
 let allBooks = [];
 let filteredBooks = [];
 let currentSearchQuery = '';
-let currentCategory = 'all'
+let currentCategory = 'all';
+
+const PAGE_SIZE = 10;
+
+
+// page number counting start with 0
+let currentPage = 0;
+
+const paginatePrevBtn = document.querySelector("#prev-btn");
+const paginateNextBtn = document.querySelector("#next-btn");
 
 document.addEventListener('DOMContentLoaded', async () => {
     await loadBooks();
     setupEventListeners();
 });
+
 
 function setupEventListeners() {
     // search input with debounce
@@ -22,21 +32,64 @@ function setupEventListeners() {
             // wait 300ms after user stops typing
         }, 300);
     });
+
+    paginatePrevBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+
+        await loadBooks(currentPage - 1, PAGE_SIZE);
+    })
+    paginateNextBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+
+        await loadBooks(currentPage + 1, PAGE_SIZE);
+    })
 }
 
-async function loadBooks() {
+async function loadBooks(page = 0, pageSize = 10) {
     const booksGrid = document.getElementById('books-grid');
     const loading = document.getElementById('loading');
     const emptyState = document.getElementById('empty-state');
+    const totalPagesText = document.querySelector('#total-pages');
+    const currentPageText = document.querySelector('#current-page');
+
+
 
     try {
-        const response = await fetch(`${API_BASE_URL}/books`);
+        const response = await fetch(`${API_BASE_URL}/books?page=${page}&pageSize=${pageSize}`);
 
         if (!response.ok) {
             throw new Error('Failed to fetch books');
         }
 
-        allBooks = await response.json();
+        paginatedResponse = await response.json();
+
+        hasNext = paginatedResponse.hasNext;
+        hasPrev = paginatedResponse.hasPrev;
+
+        paginatePrevBtn.classList.remove('disabled');
+        paginateNextBtn.classList.remove('disabled');
+
+
+        // note: don't change the values of the api responses
+        // for easier development
+
+        totalPages = paginatedResponse.totalPages;
+        currentPage = paginatedResponse.currentPage;
+
+        // adjust for zero based counting of page number
+        totalPagesText.innerText = totalPages;
+        currentPageText.innerText = currentPage + 1;
+
+        if(!hasPrev && currentPage < 1) {
+            paginatePrevBtn.classList.add('disabled');
+        }
+
+        if (!hasNext && currentPage >= (totalPages - 1)) {
+            paginateNextBtn.classList.add('disabled');
+        }
+
+        allBooks = paginatedResponse.content;
+
         filteredBooks = [...allBooks];
 
         loading.style.display = 'none';
@@ -62,6 +115,9 @@ async function loadBooks() {
 
 function loadCategories() {
     const categoryFiltersContainer = document.getElementById('category-filters');
+
+    // reset for pagination actions
+    categoryFiltersContainer.innerHTML = "";
 
     // extract unique categories from all books
     const categoriesSet = new Set();
