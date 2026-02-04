@@ -2,11 +2,16 @@ package com.david.readme.services;
 
 import com.david.readme.dtos.BookRequest;
 import com.david.readme.dtos.GetBooksByCategory;
+import com.david.readme.dtos.PaginatedResponse;
 import com.david.readme.exceptions.ResourceNotFoundException;
 import com.david.readme.models.Book;
 import com.david.readme.models.Category;
 import com.david.readme.repositories.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,21 +21,28 @@ import java.util.stream.Collectors;
 
 @Service
 public class BookService {
+    @Autowired
     private BookRepository bookRepository;
 
-    public BookService(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
-    }
-
-    public List<BookRequest> getAllBooks() {
-        return bookRepository.findAll().stream()
+    public PaginatedResponse<BookRequest> getAllBooks(int currentPage, int pageSize) {
+        Page<Book> bookPaginated = this.bookRepository.findAll(PageRequest.of(currentPage, pageSize, Sort.by("createdAt").descending()));
+        List<BookRequest> bookRequests = bookPaginated.getContent().stream()
                 .map(this::convertToBookRequest)
-                .collect(Collectors.toList());
+                .toList();
+        return new PaginatedResponse<>(
+            bookRequests,
+            bookPaginated.getNumber(),
+            bookPaginated.getTotalPages(),
+            bookPaginated.getTotalElements(),
+            pageSize,
+            bookPaginated.hasNext(),
+            bookPaginated.hasPrevious()
+        );
     }
 
     public BookRequest getBookById(Long id) {
         Book book = this.bookRepository.findById(id).
-                orElseThrow(() -> new ResourceNotFoundException("Unable to find book with id: "+ id));
+                orElseThrow(() -> new ResourceNotFoundException("Unable to find book with id: " + id));
         return convertToBookRequest(book);
     }
 
