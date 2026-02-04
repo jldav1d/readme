@@ -65,6 +65,18 @@
 
             <div id="books-grid" class="grid grid-4"></div>
 
+            <div class="pagination-controls">
+                <button class="btn-pagination" id="prev-btn" onclick="handlePreviousPage()">
+                    ← Prev
+                </button>
+                <span class="pagination-info">
+                    Page <span id="current-page">1</span> of <span id="total-pages">1</span>
+                </span>
+                <button class="btn-pagination" id="next-btn">
+                    Next →
+                </button>
+            </div>
+
             <div id="empty-state" class="empty-state" style="display: none;">
                 <p class="text-muted">No books available at the moment.</p>
             </div>
