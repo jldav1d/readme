@@ -174,6 +174,20 @@ a:hover {
     color: var(--bg-primary);
 }
 
+.btn-submit {
+    font-family: 'JetBrains Mono', monospace;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--text-base);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-block;
+    background-color: var(--accent-orange);
+    color: var(--bg-primary);
+}
+
 .btn-primary:hover {
     background-color: var(--accent-orange-hover);
     transform: translateY(-2px);
@@ -1049,6 +1063,35 @@ a:hover {
 #total-pages {
     color: var(--text-primary);
     font-weight: 600;
+}
+
+.field {
+    font-size: var(--text-sm);
+    gap: var(--spacing-xs);
+}
+
+.add-new-book-form {
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.add-new-user-form {
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.admin-forms {
+    display: flex;
+    gap: var(--spacing-lg);
+}
+
+.grouped-fields {
+    display: flex;
+    gap: var(--spacing-md);
 }
 
 /* breakpoints for responsiveness*/
