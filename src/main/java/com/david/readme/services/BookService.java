@@ -7,10 +7,8 @@ import com.david.readme.exceptions.ResourceNotFoundException;
 import com.david.readme.models.Book;
 import com.david.readme.models.Category;
 import com.david.readme.repositories.BookRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +19,19 @@ import java.util.stream.Collectors;
 
 @Service
 public class BookService {
-    @Autowired
-    private BookRepository bookRepository;
+    private final BookRepository bookRepository;
+
+    public BookService(BookRepository bookRepository) {this.bookRepository = bookRepository;}
+
+
+//    @PreAuthorize("hasRole('ADMIN')")
+    public void addNewBook(Book book){
+        this.bookRepository.save(book);
+    }
+
+    public boolean isSlugADuplicate(String slug){
+        return this.bookRepository.findBySlug(slug).orElse(null) != null;
+    }
 
     public PaginatedResponse<BookRequest> getAllBooks(int currentPage, int pageSize) {
         Page<Book> bookPaginated = this.bookRepository.findAll(PageRequest.of(currentPage, pageSize, Sort.by("createdAt").descending()));

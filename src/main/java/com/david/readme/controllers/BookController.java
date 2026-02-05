@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -46,5 +47,29 @@ public class BookController {
         }
         return ResponseEntity.ok(books);
     }
+
+    @PostMapping("/add")
+    public ResponseEntity<?> addBook(@RequestBody Book bookRequest) {
+
+        System.out.println(bookRequest);
+
+        if(this.bookService.isSlugADuplicate(bookRequest.getSlug())){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Duplicate slug is not allowed");
+        }
+
+        if(bookRequest.getPrice().compareTo(BigDecimal.ZERO) <= 0){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Negative price number is not allowed");
+        }
+
+        if(bookRequest.getStock() < 0){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Negative stock number is not allowed");
+        }
+
+        this.bookService.addNewBook(bookRequest);
+
+        return ResponseEntity.ok(new SimpleMessage("Book added successfully"));
+    }
 }
 
+record SimpleMessage(String message){
+}
