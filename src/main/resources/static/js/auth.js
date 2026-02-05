@@ -27,6 +27,18 @@ async function getCurrentUser() {
     }
 }
 
+async function checkAdmin(){
+    const checkAdminText = document.getElementById('check-admin');
+    const currentUser = await getCurrentUser();
+    if (!currentUser) {
+        return null;
+    }
+
+    if (currentUser.role === 'ADMIN') {
+        checkAdminText.textContent = "You are a ADMIN";
+    }
+}
+
 async function updateAuthButton() {
     const authLink = document.getElementById('auth-link');
 

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>readme - Online Bookstore</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script defer src="js/show-notification.js"></script>
+    <script defer src="js/config.js"></script>
+    <script defer src="js/admin.js"></script>
+    <script src="js/load.js"></script>
+    <script src="js/auth.js"></script>
+</head>
+<body>
+<header class="header">
+    <nav class="nav container">
+        <div class="nav-brand">
+            <span>{</span> readme <span>}</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="login.html" id="auth-link">Login</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="main">
+    <div class="container">
+        <p class="hero-subtitle">Add New Book</p>
+
+        <div class="admin-forms">
+            <form class="add-new-book-form" >
+                <div class="field">
+                    <label for="title" class="form-label">Title *</label>
+                    <input class="form-input" type="text" id="title" name="title" required>
+                </div>
+
+                <div class="field">
+                    <label for="author" class="form-label">Author *</label>
+                    <input class="form-input" type="text" id="author" name="author" required>
+                </div>
+
+                <div class="field">
+                    <label for="slug" class="form-label">Slug *</label>
+                    <input class="form-input" type="text" id="slug" name="author" required>
+                </div>
+
+                <div class="field">
+                    <label for="description" class="form-label">Description *</label>
+                    <textarea class="form-input" id="description" name="description" required cols="3"></textarea>
+                </div>
+
+                <div class="grouped-fields">
+                    <div class="field">
+                        <label for="price" class="form-label">Price *</label>
+                        <input class="form-input" step=".01" id="price" name="price" required min="0" type="number"/>
+                    </div>
+
+                    <div class="field">
+                        <label for="stock" class="form-label">Stock *</label>
+                        <input class="form-input" id="stock" name="stock" required min="1" type="number"/>
+                    </div>
+                    <div class="field">
+                        <label for="publishedDate" class="form-label">Published Date *</label>
+                        <input class="form-input" id="publishedDate" type="date" name="publishedAt" required />
+                    </div>
+
+                </div>
+
+                <div class="field">
+                    <label for="category" class="form-label">Category *</label>
+                    <input class="form-input" id="category" type="text" name="category" required />
+                </div>
+                <button type="submit" class="btn-submit">Add Book</button>
+            </form>
+
+            <form class="add-new-user-form" >
+                <div class="field">
+                    <label for="username" class="form-label">Username</label>
+                    <input class="form-input" type="text" id="username" name="title" required>
+                </div>
+
+                <div class="field">
+                    <label for="password" class="form-label">Password</label>
+                    <input class="form-input" type="text" id="password" name="password" required>
+                </div>
+
+                <div class="field">
+                    <label for="role" class="form-label">Role *</label>
+                    <select class="form-input" id="role" name="role" required>
+                        <option value="USER">User</option>
+                        <option value="ADMIN">Admin</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-submit">Add User</button>
+            </form>
+        </div>
+
+
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <p>&copy; 2026 readme. Built with Spring Boot & Vanilla JS.</p>
+        <p class="text-muted">// System.out.println("Happy Reading!");</p>
+    </div>
+</footer>
+</body>
+</html>

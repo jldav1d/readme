@@ -4,11 +4,11 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record GetBooksByCategory(
-        String title,
-        String author,
-        String description,
-        BigDecimal price,
-        int stock,
-        String slug,
-        LocalDateTime publishedAt
+    String title,
+    String author,
+    String description,
+    BigDecimal price,
+    int stock,
+    String slug,
+    LocalDateTime publishedAt
 ) {}
