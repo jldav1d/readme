@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -18,6 +19,7 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
 
@@ -50,14 +52,16 @@ public class SecurityConfig {
 
                     // public endpoints
                     .requestMatchers("/", "/index.html", "/books.html","/login.html", "/register.html").permitAll()
+                    .requestMatchers("/admin.html").hasRole("ADMIN")
                     .requestMatchers("/css/**", "/js/**").permitAll()
                     .requestMatchers("/api/v1/auth/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/v1/books/**").permitAll()
 
                     // protected endpoints
+
                     .requestMatchers("/cart.html", "/orders.html").authenticated()
                     .requestMatchers("/api/v1/cart/**", "/api/v1/orders/**").authenticated()
-
+                    .requestMatchers(HttpMethod.POST, "/api/v1/books/add").authenticated()
                     // authenticate any other request by default
                     .anyRequest().authenticated()
             )
